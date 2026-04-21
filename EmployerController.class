@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Applicants</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Applicants for <span th:text="${job.title}"></span></h1>
+    <a th:href="@{/employer/dashboard}">Back</a>
+    <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+        <tr th:each="app : ${applications}">
+            <td th:text="${app.user.name}"></td>
+            <td th:text="${app.user.email}"></td>
+            <td th:text="${app.status}"></td>
+            <td>
+                <form th:action="@{/employer/applications/{id}/status(id=${app.id})}" method="post">
+                    <select name="status">
+                        <option value="SHORTLISTED">Shortlist</option>
+                        <option value="REJECTED">Reject</option>
+                    </select>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

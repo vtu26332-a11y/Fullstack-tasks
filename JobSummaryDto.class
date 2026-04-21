@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Employer Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Employer Dashboard</h1>
+    <a href="/logout">Logout</a>
+
+    <section class="card">
+        <h2>Post Job</h2>
+        <form method="post" th:action="@{/employer/jobs}" th:object="${newJob}">
+            <input th:field="*{title}" placeholder="Title" required />
+            <input th:field="*{category}" placeholder="Category" required />
+            <input th:field="*{skills}" placeholder="Required Skills" required />
+            <input th:field="*{location}" placeholder="Location" required />
+            <input th:field="*{experience}" placeholder="Experience" required />
+            <input th:field="*{salary}" type="number" placeholder="Salary" />
+            <textarea th:field="*{description}" placeholder="Description" required></textarea>
+            <button type="submit">Publish Job</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Your Job Posts</h2>
+        <table>
+            <thead><tr><th>Title</th><th>Location</th><th>Applicants</th><th>Actions</th></tr></thead>
+            <tbody>
+            <tr th:each="job : ${jobs}">
+                <td th:text="${job.title}"></td>
+                <td th:text="${job.location}"></td>
+                <td><a th:href="@{/employer/jobs/{id}/applicants(id=${job.id})}">View Applicants</a></td>
+                <td>
+                    <form th:action="@{/employer/jobs/{id}/delete(id=${job.id})}" method="post">
+                        <button class="danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+</body>
+</html>

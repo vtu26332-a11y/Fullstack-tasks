@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${pageTitle}">Job Listings</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar(role=${role})}"></div>
+
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <div class="two-col">
+            <aside class="filters">
+                <h3>Filters</h3>
+                <form id="filtersForm" method="get" th:action="@{/student/jobs}">
+                    <label>Category</label>
+                    <input type="text" name="category" placeholder="e.g. Software" th:value="${category}" />
+
+                    <label>Location</label>
+                    <input type="text" name="location" placeholder="e.g. Bangalore" th:value="${location}" />
+
+                    <label>Skills</label>
+                    <input type="text" name="skills" placeholder="e.g. Java, Spring" th:value="${skills}" />
+
+                    <label>Experience</label>
+                    <input type="text" name="experience" placeholder="e.g. 2+ years" th:value="${experience}" />
+
+                    <label>Min Salary</label>
+                    <input type="number" name="minSalary" placeholder="0" th:value="${minSalary}" />
+
+                    <label>Max Salary</label>
+                    <input type="number" name="maxSalary" placeholder="100000" th:value="${maxSalary}" />
+
+                    <div style="display:flex;gap:10px;">
+                        <button type="submit" style="width:auto;">Search</button>
+                        <a th:href="@{/student/jobs}" style="width:auto;display:inline-block;padding:10px 12px;border:1px solid var(--border);border-radius:8px;text-decoration:none;color:var(--text);background:#fff;font-weight:700;text-align:center;">Reset</a>
+                    </div>
+                </form>
+            </aside>
+
+            <main>
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap;">
+                    <h2 style="margin:0;">Job Listings</h2>
+                    <span id="resultsBadge" class="badge" th:text="${jobs != null ? #lists.size(jobs) : 0} + ' results'">0 results</span>
+                </div>
+
+                <div id="jobCards" class="job-grid" style="margin-top:14px;">
+                    <div class="job-card" th:each="job : ${jobs}">
+                        <h3 th:text="${job.title}">Job title</h3>
+                        <div class="meta">
+                            <span th:text="${job.category}">Category</span> ·
+                            <span th:text="${job.location}">Location</span> ·
+                            <span th:text="${job.experience}">Experience</span>
+                        </div>
+                        <p style="margin:10px 0 0 0;color:var(--muted);" th:text="${job.description}"></p>
+
+                        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+                            <a th:href="@{/student/jobs/{id}(id=${job.id})}" class="badge" style="cursor:pointer;text-decoration:none;width:auto;">Details</a>
+                            <form th:action="@{/student/jobs/{id}/apply(id=${job.id})}" method="post" style="margin:0;">
+                                <button type="submit" style="width:auto;">Apply</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pagination">
+                    <a th:if="${page > 0}" th:href="@{/student/jobs(page=${page-1}, size=${size}, category=${category}, location=${location}, skills=${skills}, experience=${experience}, minSalary=${minSalary}, maxSalary=${maxSalary})}">Prev</a>
+                    <a th:if="${page+1 < totalPages}" th:href="@{/student/jobs(page=${page+1}, size=${size}, category=${category}, location=${location}, skills=${skills}, experience=${experience}, minSalary=${minSalary}, maxSalary=${maxSalary})}">Next</a>
+                </div>
+            </main>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+
+<script th:src="@{/js/job-search.js}"></script>
+</body>
+</html>
+

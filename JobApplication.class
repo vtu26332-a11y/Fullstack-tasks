@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="header">
+    <div class="topbar">
+        <div class="title" th:text="${pageTitle != null ? pageTitle : 'Job Portal'}">Job Portal</div>
+        <div>
+            <span class="badge">Account</span>
+            <a style="margin-left:12px;color:var(--text);text-decoration:none;" th:href="@{/logout}">Logout</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

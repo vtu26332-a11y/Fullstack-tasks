@@ -1,0 +1,96 @@
+package com.jobportal.service;
+
+import com.jobportal.entity.Job;
+import com.jobportal.entity.User;
+import com.jobportal.repository.JobRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@Service
+public class JobService {
+    private final JobRepository jobRepository;
+
+    public JobService(JobRepository jobRepository) {
+        this.jobRepository = jobRepository;
+    }
+
+    public Job postJob(Job job, User employer) {
+        job.setEmployer(employer);
+        return jobRepository.save(job);
+    }
+
+    public Job updateJob(Job job, User employer) {
+        Job existing = getById(job.getId());
+        if (!existing.getEmployer().getId().equals(employer.getId())) {
+            throw new IllegalArgumentException("Not authorized for this job");
+        }
+        existing.setTitle(job.getTitle());
+        existing.setDescription(job.getDescription());
+        existing.setSkills(job.getSkills());
+        existing.setCategory(job.getCategory());
+        existing.setExperience(job.getExperience());
+        existing.setSalary(job.getSalary());
+        existing.setLocation(job.getLocation());
+        return jobRepository.save(existing);
+    }
+
+    public void deleteJob(Long id, User employer) {
+        Job existing = getById(id);
+        if (!existing.getEmployer().getId().equals(employer.getId())) {
+            throw new IllegalArgumentException("Not authorized for this job");
+        }
+        jobRepository.delete(existing);
+    }
+
+    public List<Job> getAllJobs() {
+        return jobRepository.findAll(Sort.by(Sort.Direction.DESC, "id"));
+    }
+
+    public List<Job> search(String category, String location, String experience, String skills) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        if (location != null && !location.isBlank()) return jobRepository.findByLocationContainingIgnoreCase(location, sort);
+        if (category != null && !category.isBlank()) return jobRepository.findByCategoryContainingIgnoreCase(category, sort);
+        if (experience != null && !experience.isBlank()) return jobRepository.findByExperienceContainingIgnoreCase(experience, sort);
+        if (skills != null && !skills.isBlank()) return jobRepository.findBySkillsContainingIgnoreCase(skills, sort);
+        return getAllJobs();
+    }
+
+    public Page<Job> searchPaged(String category,
+                                   String location,
+                                   String experience,
+                                   String skills,
+                                   BigDecimal minSalary,
+                                   BigDecimal maxSalary,
+                                   int page,
+                                   int size) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        PageRequest pr = PageRequest.of(page, size, sort);
+        return jobRepository.search(
+                normalizeBlank(category),
+                normalizeBlank(location),
+                normalizeBlank(experience),
+                normalizeBlank(skills),
+                minSalary,
+                maxSalary,
+                pr
+        );
+    }
+
+    private String normalizeBlank(String value) {
+        if (value == null) return null;
+        return value.isBlank() ? null : value;
+    }
+
+    public Job getById(Long id) {
+        return jobRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Job not found"));
+    }
+
+    public List<Job> getByEmployer(User employer) {
+        return jobRepository.findByEmployer(employer);
+    }
+}

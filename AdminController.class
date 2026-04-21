@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${pageTitle}">Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar(role=${role})}"></div>
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <section class="grid">
+            <div class="metric"><h3>Applied</h3><p th:text="${appliedCount}">0</p></div>
+            <div class="metric"><h3>Shortlisted</h3><p th:text="${shortlistedCount}">0</p></div>
+            <div class="metric"><h3>Total Jobs</h3><p th:text="${#lists.size(jobs)}">0</p></div>
+        </section>
+
+        <section class="card" style="margin-top:18px;">
+            <h2>Students</h2>
+            <table style="margin-top:10px;">
+                <thead>
+                <tr><th>Name</th><th>Email</th><th>Action</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${students}">
+                    <td th:text="${u.name}">Name</td>
+                    <td th:text="${u.email}">Email</td>
+                    <td>
+                        <form method="post" th:action="@{/admin/users/{id}/delete(id=${u.id})}" style="margin:0;">
+                            <button class="danger" type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="card" style="margin-top:18px;">
+            <h2>Employers</h2>
+            <table style="margin-top:10px;">
+                <thead>
+                <tr><th>Name</th><th>Email</th></tr>
+                </thead>
+                <tbody>
+                <tr th:each="u : ${employers}">
+                    <td th:text="${u.name}">Name</td>
+                    <td th:text="${u.email}">Email</td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
+

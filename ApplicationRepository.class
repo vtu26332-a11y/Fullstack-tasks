@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="container">
+    <div class="card" style="padding:28px;">
+        <div style="display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap;">
+            <div>
+                <h1 style="margin-bottom:6px;">Find your next role</h1>
+                <p style="margin-top:0;color:var(--muted);">A real job portal experience for students, employers, and admins.</p>
+            </div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <a style="padding:10px 14px;border-radius:8px;border:1px solid var(--border);text-decoration:none;color:var(--text);background:#fff;display:inline-block;font-weight:700;"
+                   th:href="@{/login}">Login</a>
+                <a style="padding:10px 14px;border-radius:8px;border:1px solid var(--border);text-decoration:none;color:var(--text);background:#fff;display:inline-block;font-weight:700;"
+                   th:href="@{/register}">Register</a>
+            </div>
+        </div>
+    </div>
+
+    <div style="margin-top:18px;">
+        <h2>Featured Jobs</h2>
+        <div class="job-grid" th:if="${featuredJobs != null and #lists.size(featuredJobs) > 0}">
+            <div class="job-card" th:each="job : ${featuredJobs}">
+                <h3 th:text="${job.title}">Job title</h3>
+                <div class="meta">
+                    <span th:text="${job.category}">Category</span> ·
+                    <span th:text="${job.location}">Location</span> ·
+                    <span th:text="${job.experience}">Experience</span>
+                </div>
+                <p style="margin:10px 0 0 0;color:var(--muted);" th:text="${job.description}"></p>
+                <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+                    <a class="badge" style="cursor:pointer;text-decoration:none;"
+                       th:href="@{/student/jobs/{id}(id=${job.id})}">View</a>
+                    <form th:action="@{/student/jobs/{id}/apply(id=${job.id})}" method="post" style="margin:0;">
+                        <button type="submit" style="width:auto;">Apply</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="card" th:if="${featuredJobs == null or #lists.size(featuredJobs) == 0}">
+            <p>No jobs yet. Please register as an Employer to post jobs.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>
+

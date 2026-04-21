@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Job Details</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar(role=${role})}"></div>
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;">
+                <div>
+                    <h2 th:text="${job.title}">Job title</h2>
+                    <div class="meta" style="margin-top:6px;color:var(--muted);">
+                        <span th:text="${job.category}">Category</span> ·
+                        <span th:text="${job.location}">Location</span> ·
+                        <span th:text="${job.experience}">Experience</span>
+                    </div>
+                </div>
+                <div>
+                    <div class="badge" th:if="${job.salary != null}" th:text="'Salary: ' + ${job.salary}">Salary</div>
+                </div>
+            </div>
+
+            <section style="margin-top:16px;">
+                <h3>Description</h3>
+                <p th:text="${job.description}"></p>
+            </section>
+
+            <section>
+                <h3>Skills Required</h3>
+                <p th:text="${job.skills}"></p>
+            </section>
+
+            <section>
+                <h3>Employer</h3>
+                <p th:text="${job.employer.name}">Employer</p>
+            </section>
+
+            <div style="margin-top:18px;display:flex;gap:12px;flex-wrap:wrap;">
+                <a th:href="@{/student/jobs}" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);text-decoration:none;color:var(--text);background:#fff;font-weight:700;width:auto;display:inline-block;">Back to Jobs</a>
+                <form th:action="@{/student/jobs/{id}/apply(id=${job.id})}" method="post" style="margin:0;">
+                    <button type="submit" style="width:auto;">Apply Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
+

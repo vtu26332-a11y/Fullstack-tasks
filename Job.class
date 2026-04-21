@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="footer">
+    <p style="color:var(--muted);font-size:13px;margin-top:26px;text-align:center;">
+        Job Portal Management System
+    </p>
+</div>
+</body>
+</html>
+

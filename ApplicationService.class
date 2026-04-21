@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${pageTitle}">Student Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar(role=${role})}"></div>
+
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <section class="grid">
+            <div class="metric"><h3>Total Applications</h3><p th:text="${totalApplications}">0</p></div>
+            <div class="metric"><h3>Applied</h3><p th:text="${appliedCount}">0</p></div>
+            <div class="metric"><h3>Shortlisted</h3><p th:text="${shortlistedCount}">0</p></div>
+            <div class="metric"><h3>Rejected</h3><p th:text="${rejectedCount}">0</p></div>
+        </section>
+
+        <section class="two-col">
+            <div class="card">
+                <h2>Profile</h2>
+                <form method="post" th:action="@{/student/profile}" enctype="multipart/form-data">
+                    <input type="text" name="name" th:value="${student.name}" placeholder="Full name" required />
+                    <input type="text" name="skills" th:value="${student.skills}" placeholder="Skills (comma-separated)" />
+                    <input type="text" name="experience" th:value="${student.experience}" placeholder="Experience (e.g. 2+ years)" />
+                    <input type="file" name="resume" />
+                    <button type="submit">Update Profile</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap;">
+                    <div>
+                        <h2>Quick Job Recommendations</h2>
+                        <p style="margin-top:6px;color:var(--muted);">Explore more jobs with filters.</p>
+                    </div>
+                    <a th:href="@{/student/jobs}" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);text-decoration:none;color:var(--text);background:#fff;font-weight:700;width:auto;display:inline-block;">View All Jobs</a>
+                </div>
+
+                <div class="job-grid" style="margin-top:14px;">
+                    <div class="job-card" th:each="job, iter : ${jobs}" th:if="${iter.index lt 6}">
+                        <h3 th:text="${job.title}">Job</h3>
+                        <div class="meta">
+                            <span th:text="${job.category}">Cat</span> ·
+                            <span th:text="${job.location}">Loc</span> ·
+                            <span th:text="${job.experience}">Exp</span>
+                        </div>
+                        <div style="margin-top:10px;display:flex;gap:10px;flex-wrap:wrap;">
+                            <a th:href="@{/student/jobs/{id}(id=${job.id})}" class="badge" style="text-decoration:none;width:auto;">Details</a>
+                            <form th:action="@{/student/jobs/{id}/apply(id=${job.id})}" method="post" style="margin:0;">
+                                <button type="submit" style="width:auto;">Apply</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="card" style="margin-top:18px;">
+            <h2>Application Tracking</h2>
+            <table style="margin-top:10px;">
+                <thead>
+                <tr>
+                    <th>Job</th>
+                    <th>Company</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="app : ${applications}">
+                    <td th:text="${app.job.title}">Title</td>
+                    <td th:text="${app.job.employer.name}">Employer</td>
+                    <td>
+                        <span class="badge"
+                              th:text="${app.status}"
+                              th:classappend="' ' + ${app.status.toString().toLowerCase()}"></span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </section>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
+

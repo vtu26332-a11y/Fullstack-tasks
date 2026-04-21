@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Student Dashboard</h1>
+    <a href="/logout">Logout</a>
+
+    <section class="card">
+        <h2>Profile</h2>
+        <form method="post" th:action="@{/student/profile}" enctype="multipart/form-data">
+            <input type="text" name="name" th:value="${student.name}" placeholder="Full name" required />
+            <input type="text" name="skills" th:value="${student.skills}" placeholder="Skills" />
+            <input type="text" name="experience" th:value="${student.experience}" placeholder="Experience" />
+            <input type="file" name="resume" />
+            <button type="submit">Update Profile</button>
+        </form>
+    </section>
+
+    <section class="card">
+        <h2>Job Listings</h2>
+        <input id="jobSearch" type="text" placeholder="Search jobs by title/location/skills" />
+        <div class="table-wrap">
+            <table id="jobsTable">
+                <thead><tr><th>Title</th><th>Category</th><th>Location</th><th>Experience</th><th>Action</th></tr></thead>
+                <tbody>
+                <tr th:each="job : ${jobs}">
+                    <td th:text="${job.title}"></td>
+                    <td th:text="${job.category}"></td>
+                    <td th:text="${job.location}"></td>
+                    <td th:text="${job.experience}"></td>
+                    <td>
+                        <form th:action="@{/student/jobs/{id}/apply(id=${job.id})}" method="post">
+                            <button type="submit">Apply</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <section class="card">
+        <h2>Application Tracking</h2>
+        <table>
+            <thead><tr><th>Job</th><th>Company</th><th>Status</th></tr></thead>
+            <tbody>
+            <tr th:each="app : ${applications}">
+                <td th:text="${app.job.title}"></td>
+                <td th:text="${app.job.employer.name}"></td>
+                <td th:text="${app.status}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+<script th:src="@{/js/app.js}"></script>
+</body>
+</html>

@@ -1,0 +1,61 @@
+package com.jobportal.service;
+
+import com.jobportal.entity.ApplicationStatus;
+import com.jobportal.entity.Job;
+import com.jobportal.entity.JobApplication;
+import com.jobportal.entity.User;
+import com.jobportal.repository.ApplicationRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class ApplicationService {
+    private final ApplicationRepository applicationRepository;
+
+    public ApplicationService(ApplicationRepository applicationRepository) {
+        this.applicationRepository = applicationRepository;
+    }
+
+    public JobApplication apply(User student, Job job) {
+        applicationRepository.findByUserAndJob(student, job).ifPresent(a -> {
+            throw new IllegalArgumentException("Already applied for this job");
+        });
+        JobApplication app = new JobApplication();
+        app.setUser(student);
+        app.setJob(job);
+        app.setStatus(ApplicationStatus.APPLIED);
+        return applicationRepository.save(app);
+    }
+
+    public List<JobApplication> byStudent(User user) {
+        return applicationRepository.findByUser(user);
+    }
+
+    public List<JobApplication> byJob(Job job) {
+        return applicationRepository.findByJob(job);
+    }
+
+    public JobApplication updateStatus(Long appId, ApplicationStatus status) {
+        JobApplication app = applicationRepository.findById(appId)
+                .orElseThrow(() -> new IllegalArgumentException("Application not found"));
+        app.setStatus(status);
+        return applicationRepository.save(app);
+    }
+
+    public long countShortlisted() {
+        return applicationRepository.countByStatus(ApplicationStatus.SHORTLISTED);
+    }
+
+    public long countApplied() {
+        return applicationRepository.countByStatus(ApplicationStatus.APPLIED);
+    }
+
+    public long countByStudentAndStatus(User student, ApplicationStatus status) {
+        return applicationRepository.countByUserAndStatus(student, status);
+    }
+
+    public long countApplicationsByStudent(User student) {
+        return applicationRepository.countByUser(student);
+    }
+}

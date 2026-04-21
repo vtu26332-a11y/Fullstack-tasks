@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Application Tracking</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="container card">
+    <h1>Application Tracking</h1>
+    <a th:href="@{/student/dashboard}">Back to Dashboard</a>
+    <table>
+        <thead><tr><th>Job Title</th><th>Employer</th><th>Status</th></tr></thead>
+        <tbody>
+        <tr th:each="app : ${applications}">
+            <td th:text="${app.job.title}"></td>
+            <td th:text="${app.job.employer.name}"></td>
+            <td th:text="${app.status}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+</html>

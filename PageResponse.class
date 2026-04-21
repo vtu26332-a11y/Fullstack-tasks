@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${pageTitle}">Employer Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar(role=${role})}"></div>
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <section class="grid">
+            <div class="metric"><h3>Jobs Posted</h3><p th:text="${jobsCount}">0</p></div>
+            <div class="metric"><h3>Total Applicants</h3><p th:text="${totalApplicants}">0</p></div>
+            <div class="metric"><h3>Shortlisted</h3><p th:text="${shortlistedCount}">0</p></div>
+        </section>
+
+        <section class="two-col">
+            <div class="card">
+                <h2>Post a Job</h2>
+                <form method="post" th:action="@{/employer/jobs}" th:object="${newJob}">
+                    <input th:field="*{title}" placeholder="Title" required />
+                    <input th:field="*{category}" placeholder="Category" required />
+                    <input th:field="*{skills}" placeholder="Required Skills" required />
+                    <input th:field="*{location}" placeholder="Location" required />
+                    <input th:field="*{experience}" placeholder="Experience" />
+                    <input th:field="*{salary}" type="number" placeholder="Salary" />
+                    <textarea th:field="*{description}" placeholder="Description" required></textarea>
+                    <button type="submit">Publish Job</button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2>Your Job Posts</h2>
+                <table style="margin-top:10px;">
+                    <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Location</th>
+                        <th>Applicants</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="job : ${jobs}">
+                        <td th:text="${job.title}">Title</td>
+                        <td th:text="${job.location}">Location</td>
+                        <td>
+                            <a th:href="@{/employer/jobs/{id}/applicants(id=${job.id})}" style="text-decoration:none;color:#1d4ed8;font-weight:700;">View</a>
+                        </td>
+                        <td>
+                            <form th:action="@{/employer/jobs/{id}/delete(id=${job.id})}" method="post" style="margin:0;">
+                                <button class="danger" type="submit">Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p style="color:var(--muted);font-size:13px;margin-top:12px;">
+                    Applicants count is available inside the applicants page.
+                </p>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
+

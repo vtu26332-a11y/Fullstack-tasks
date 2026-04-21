@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<div th:fragment="sidebar(role)">
+    <div class="brand">JobPortal</div>
+    <nav>
+        <ul>
+            <li th:if="${role} == 'STUDENT'">
+                <a th:href="@{/student/dashboard}">Dashboard</a>
+            </li>
+            <li th:if="${role} == 'STUDENT'">
+                <a th:href="@{/student/jobs}">Jobs</a>
+            </li>
+            <li th:if="${role} == 'STUDENT'">
+                <a th:href="@{/student/applications}">Applications</a>
+            </li>
+
+            <li th:if="${role} == 'EMPLOYER'">
+                <a th:href="@{/employer/dashboard}">Dashboard</a>
+            </li>
+            <li th:if="${role} == 'EMPLOYER'">
+                <a th:href="@{/employer/dashboard}">Post / Manage Jobs</a>
+            </li>
+
+            <li th:if="${role} == 'ADMIN'">
+                <a th:href="@{/admin/dashboard}">Admin Dashboard</a>
+            </li>
+        </ul>
+    </nav>
+</div>
+</body>
+</html>
+

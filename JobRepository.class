@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - Job Portal</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="container auth-card">
+    <h1>Job Portal Login</h1>
+    <form method="post" th:action="@{/login}">
+        <label>Email</label>
+        <input type="text" name="username" required />
+        <label>Password</label>
+        <input type="password" name="password" required />
+        <button type="submit">Login</button>
+    </form>
+    <p><a th:href="@{/register}">Create account</a></p>
+</div>
+</body>
+</html>

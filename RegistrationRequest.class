@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head><meta charset="UTF-8" /><title>Error</title><link rel="stylesheet" th:href="@{/css/app.css}" /></head>
+<body>
+<div class="container card">
+    <h2>Error</h2>
+    <p th:text="${error}"></p>
+    <a href="/dashboard">Go back</a>
+</div>
+</body>
+</html>

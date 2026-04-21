@@ -1,0 +1,118 @@
+(() => {
+    const jobCards = document.getElementById("jobCards");
+    const form = document.getElementById("filtersForm");
+    const resultsBadge = document.getElementById("resultsBadge");
+
+    if (!jobCards || !form) return;
+
+    const qs = new URLSearchParams(window.location.search);
+    const initialPage = parseInt(qs.get("page") || "0", 10);
+    const size = parseInt(qs.get("size") || "9", 10);
+
+    const readVal = (name) => {
+        const el = form.querySelector(`[name="${name}"]`);
+        if (!el) return null;
+        const v = (el.value || "").trim();
+        return v.length ? v : null;
+    };
+
+    const readNum = (name) => {
+        const v = readVal(name);
+        if (v === null) return null;
+        const n = Number(v);
+        return Number.isFinite(n) ? n : null;
+    };
+
+    const renderCards = (jobs) => {
+        jobCards.innerHTML = "";
+        if (!jobs || jobs.length === 0) {
+            jobCards.innerHTML = `<div class="card" style="grid-column:1/-1;padding:18px;color:var(--muted);">No jobs found.</div>`;
+            return;
+        }
+
+        for (const job of jobs) {
+            const salaryText = job.salary != null ? ` · Salary: ${job.salary}` : "";
+            const employer = job.employerName ? job.employerName : "";
+
+            jobCards.insertAdjacentHTML(
+                "beforeend",
+                `
+                <div class="job-card">
+                    <h3>${job.title}</h3>
+                    <div class="meta">
+                        ${job.category || ""} · ${job.location || ""} · ${job.experience || ""}${salaryText}
+                    </div>
+                    <p style="margin:10px 0 0 0;color:var(--muted);">${job.description || ""}</p>
+                    <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+                        <a href="/student/jobs/${job.id}" class="badge" style="cursor:pointer;text-decoration:none;width:auto;">Details</a>
+                        <form action="/student/jobs/${job.id}/apply" method="post" style="margin:0;">
+                            <button type="submit" style="width:auto;">Apply</button>
+                        </form>
+                    </div>
+                    ${employer ? `<div class="meta" style="margin-top:8px;">Employer: ${employer}</div>` : ""}
+                </div>
+            `
+            );
+        }
+    };
+
+    const buildApiUrl = (page) => {
+        const params = new URLSearchParams();
+        const category = readVal("category");
+        const location = readVal("location");
+        const experience = readVal("experience");
+        const skills = readVal("skills");
+
+        if (category) params.set("category", category);
+        if (location) params.set("location", location);
+        if (experience) params.set("experience", experience);
+        if (skills) params.set("skills", skills);
+
+        const minSalary = readNum("minSalary");
+        const maxSalary = readNum("maxSalary");
+        if (minSalary != null) params.set("minSalary", String(minSalary));
+        if (maxSalary != null) params.set("maxSalary", String(maxSalary));
+
+        params.set("page", String(page));
+        params.set("size", String(size));
+
+        return `/api/jobs/search?${params.toString()}`;
+    };
+
+    const loadJobs = async (page) => {
+        const url = buildApiUrl(page);
+        const res = await fetch(url, { headers: { "Accept": "application/json" } });
+        if (!res.ok) {
+            console.error("Job search failed", res.status);
+            return;
+        }
+        const data = await res.json();
+        renderCards(data.content);
+
+        if (resultsBadge) {
+            // If totalElements exists (it should), display that; otherwise fallback.
+            const total = data.totalElements != null ? data.totalElements : (data.content ? data.content.length : 0);
+            resultsBadge.textContent = `${total} results`;
+        }
+    };
+
+    // Debounce typing to avoid spamming requests.
+    let t = null;
+    const debounceLoad = () => {
+        clearTimeout(t);
+        t = setTimeout(() => loadJobs(0), 400);
+    };
+
+    // Intercept changes and dynamically refresh via REST.
+    ["input", "change"].forEach((eventName) => {
+        form.addEventListener(eventName, (e) => {
+            if (e.target && (e.target.name === "category" || e.target.name === "location" || e.target.name === "skills" || e.target.name === "experience" || e.target.name === "minSalary" || e.target.name === "maxSalary")) {
+                debounceLoad();
+            }
+        });
+    });
+
+    // Initial refresh so JS rendering matches server filters on refresh.
+    loadJobs(initialPage);
+})();
+

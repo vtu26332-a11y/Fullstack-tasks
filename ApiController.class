@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="container">
+    <h1>Admin Dashboard</h1>
+    <a href="/logout">Logout</a>
+
+    <section class="grid">
+        <div class="metric"><h3>Applied</h3><p th:text="${appliedCount}"></p></div>
+        <div class="metric"><h3>Shortlisted</h3><p th:text="${shortlistedCount}"></p></div>
+        <div class="metric"><h3>Total Jobs</h3><p th:text="${#lists.size(jobs)}"></p></div>
+    </section>
+
+    <section class="card">
+        <h2>Students</h2>
+        <table>
+            <thead><tr><th>Name</th><th>Email</th><th>Action</th></tr></thead>
+            <tbody>
+            <tr th:each="u : ${students}">
+                <td th:text="${u.name}"></td><td th:text="${u.email}"></td>
+                <td><form method="post" th:action="@{/admin/users/{id}/delete(id=${u.id})}"><button class="danger">Delete</button></form></td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <section class="card">
+        <h2>Employers</h2>
+        <table>
+            <thead><tr><th>Name</th><th>Email</th></tr></thead>
+            <tbody>
+            <tr th:each="u : ${employers}"><td th:text="${u.name}"></td><td th:text="${u.email}"></td></tr>
+            </tbody>
+        </table>
+    </section>
+</div>
+</body>
+</html>

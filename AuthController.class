@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title th:text="${pageTitle}">Applicants</title>
+    <link rel="stylesheet" th:href="@{/css/app.css}" />
+</head>
+<body>
+<div class="app-shell">
+    <div th:replace="~{fragments/sidebar :: sidebar(role=${role})}"></div>
+    <div class="main">
+        <div th:replace="~{fragments/header :: header}"></div>
+
+        <section class="card">
+            <h2 th:text="${pageTitle}">Applicants</h2>
+            <p style="color:var(--muted);margin-top:6px;">
+                Job: <strong th:text="${job.title}">Job title</strong>
+            </p>
+
+            <table style="margin-top:12px;">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Update</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="app : ${applications}">
+                    <td th:text="${app.user.name}">Name</td>
+                    <td th:text="${app.user.email}">Email</td>
+                    <td>
+                        <span class="badge"
+                              th:text="${app.status}"
+                              th:classappend="' ' + ${app.status.toString().toLowerCase()}"></span>
+                    </td>
+                    <td>
+                        <form th:action="@{/employer/applications/{id}/status(id=${app.id})}" method="post" style="min-width:220px;">
+                            <select name="status">
+                                <option value="SHORTLISTED" th:selected="${app.status.toString() == 'SHORTLISTED'}">Shortlist</option>
+                                <option value="REJECTED" th:selected="${app.status.toString() == 'REJECTED'}">Reject</option>
+                            </select>
+                            <button type="submit" style="width:auto;">Update</button>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <div style="margin-top:14px;">
+                <a th:href="@{/employer/dashboard}" style="padding:10px 12px;border-radius:8px;border:1px solid var(--border);text-decoration:none;color:var(--text);background:#fff;font-weight:700;width:auto;display:inline-block;">Back to Dashboard</a>
+            </div>
+        </section>
+    </div>
+</div>
+
+<div th:replace="~{fragments/footer :: footer}"></div>
+</body>
+</html>
+
